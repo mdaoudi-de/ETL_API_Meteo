@@ -1,0 +1,6 @@
+pandas
+pyarrow
+requests
+tqdm
+click
+sqlalchemy

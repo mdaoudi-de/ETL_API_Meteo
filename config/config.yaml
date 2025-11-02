@@ -1,0 +1,5 @@
+start_date: 2025-10-01
+end_date: 2025-10-31
+timezone: Europe/Paris
+cities_file: config/cities.csv
+out_dir: data
