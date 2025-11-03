@@ -4,6 +4,7 @@ from pathlib import Path
 from datetime import date, timedelta
 import pandas as pd
 import json
+import shutil
 from src.etl_weather.ingest.open_meteo_client import fetch_forecast
 
 CITIES_FILE = Path("config/cities.csv")
@@ -21,6 +22,13 @@ def main():
     today = date.today()
     start = today
     end = today + timedelta(days=7)
+
+    # Suppression des dossiers plus ancien que la date du jour
+    for old_dir in RAW_ROOT.glob("date=*"):
+        folder_date = old_dir.name.split("=")[1]
+        if folder_date < today.isoformat():
+            shutil.rmtree(old_dir)
+            print(f"🗑️  Ancien dossier supprimé : {old_dir}")
 
     for _, row in cities.iterrows():
         city , lat, lon = row["city"], row["lat"], row["lon"]
