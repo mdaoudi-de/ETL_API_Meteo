@@ -11,7 +11,8 @@ RAW_ROOT = Path("data/raw/forecast")
 RAW_ROOT.mkdir(parents=True, exist_ok=True)
 
 def _slug(name: str) -> str:
-    """Convertit un nom de ville en une version adptée pour les noms de fichiers."""
+    """Convertit un nom de ville en une version adptée pour les noms de fichiers. 
+    param name: Nom de la ville"""
     return name.lower().replace(" ", "_")
 
 def main():
