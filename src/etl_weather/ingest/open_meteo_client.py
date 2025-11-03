@@ -6,9 +6,11 @@ import os
 API_BASE_FORECAST = os.getenv(
     "OPEN_METEO_BASE", "https://api.open-meteo.com/v1/forecast"
 )
+
 API_BASE_ARCHIVE = os.getenv(
     "OPEN_METEO_ARCHIVE_BASE", "https://archive-api.open-meteo.com/v1/archive"
 )
+
 DAILY_VARS = "temperature_2m_max,temperature_2m_min,precipitation_sum"
 
 
