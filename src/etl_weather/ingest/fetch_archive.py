@@ -1,4 +1,4 @@
-# Appel  à l'API Open Meteo pour obtenir les données météorologiques archivées
+# Appel à l'API Open Meteo pour obtenir les données météorologiques archivées
 
 from pathlib import Path
 from datetime import date, timedelta

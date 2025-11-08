@@ -12,19 +12,16 @@ STAGING_ROOT.mkdir(parents=True, exist_ok=True)
 
 
 def main():
-    """Normalise les fichiers de prévisions météorologiques quotidiens en CSV."""
     today_dir = RAW_ROOT / f"date={date.today().isoformat()}"
     if not today_dir.exists():
         raise FileNotFoundError(f"Le répertoire {today_dir} n'existe pas.")
     
-    
-    for city_dir in sorted(today_dir.glob("city=*")):
-        out_dir = STAGING_ROOT / today_dir.name / city_dir.name
+    for i in sorted(today_dir.glob("city=*")):
+        out_dir = STAGING_ROOT / today_dir.name / i.name
         out_dir.mkdir(parents=True,exist_ok=True)
 
-        src = city_dir / "part-0000.jsonl"
+        src = i / "part-0000.jsonl"
 
-        # Vérification de l'existence du fichier source
         if not src.exists():
             print(f"Fichier Manquant : {src}")
             continue
@@ -32,21 +29,25 @@ def main():
         obj = json.loads(src.read_text(encoding="utf-8"))
         daily = obj.get("daily", {})
 
-        # Vérification de la présence des données 'daily'
         if not daily:
             print(f"Pas de 'daily' dans {src}")
             continue
 
         df = pd.DataFrame(daily)
-        df["city"] = city_dir.name.split("=",1)[0]
+        df["ville"] = i.name.split("=",1)[1]
         df["longitude"] = obj.get("longitude")
         df["latitude"] = obj.get("latitude")
         df["altitude"] = obj.get("elevation")
 
-        # Écriture des données normalisées au format CSV
-        (out_dir/"part-0000.csv").write_text(df.to_csv(index=False),encoding="utf-8")
-        print(f"normalize forecast -> {out_dir}/part-0000.csv")
+
+        df["date"] = df["time"]
+        df_f = df[["ville","latitude","longitude","date","temperature_2m_max","temperature_2m_min","precipitation_sum"]]
+        print(df_f)
+        break
+
+
 
 
 if __name__ == "__main__":
     main()
+
