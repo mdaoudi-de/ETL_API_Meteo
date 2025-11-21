@@ -113,10 +113,12 @@ Le pipeline utilise principalement les champs suivants :
 
 Les données normalisées sont stockées en Parquet avec un partitionnement :
 
+```text
 data/parquet/
 └── date=YYYY-MM-DD/
 └── city=nom-ville/
 └── part-0000.parquet
+```
 
 
 Chaque fichier contient :
