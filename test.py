@@ -1,53 +1,54 @@
-# Normalisation des prévisions météorologiques
-
 from pathlib import Path
-import json
-import pandas as pd
 from datetime import date
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+import shutil
 
+STAGING = Path("data/staging")
+OUT = Path("data/parket")
 
-RAW_ROOT = Path("data/raw/forecast")
-STAGING_ROOT = Path("data/staging/forecast")
-STAGING_ROOT.mkdir(parents=True, exist_ok=True)
+OUT.mkdir(parents=True, exist_ok=True)
 
+def _read_today(kind : str) -> pd.DataFrame:
+    """Lit les données normalisées du jour depuis le répertoire de staging.
+    param kind: Le type de données à lire ('forecast' ou 'archive')."""
+    root = STAGING / kind / f"date={date.today().isoformat()}"
+    if not root.exists():
+        return pd.DataFrame
+    dfs = []
+    for city_dir in sorted(root.glob("city=*")):
+        src = city_dir / "part-0000.csv"
+    if src.exists():
+        df = pd.read_csv(src)
+        df["city"] = city_dir.name.split("=",1)[1]
+        df["source"] = kind
+        dfs.append(df)
+    return pd.concat(dfs,ignore_index=True) if dfs else pd.DataFrame()
+
+def _cleanup_partitions(df: pd.DataFrame) -> None:
+    """Supprime les partitions date=.../ city=... avant d'écrire.
+     param df: Le DataFrame contenant les données à écrire."""
+    if df.empty:
+        return
+    dates = df["time"].astype(str).unique().tolist()
+    cities = df["city"].astype(str).unique().tolist()
+    # 
+    for d in dates:
+        print(d)
+        for c in cities:
+            print(c)
+            part_dir = OUT / f"date={d}" / f"city={c}"
+            if part_dir.exists():
+                shutil.rmtree(part_dir)
 
 def main():
-    today_dir = RAW_ROOT / f"date={date.today().isoformat()}"
-    if not today_dir.exists():
-        raise FileNotFoundError(f"Le répertoire {today_dir} n'existe pas.")
-    
-    for i in sorted(today_dir.glob("city=*")):
-        out_dir = STAGING_ROOT / today_dir.name / i.name
-        out_dir.mkdir(parents=True,exist_ok=True)
-
-        src = i / "part-0000.jsonl"
-
-        if not src.exists():
-            print(f"Fichier Manquant : {src}")
-            continue
-
-        obj = json.loads(src.read_text(encoding="utf-8"))
-        daily = obj.get("daily", {})
-
-        if not daily:
-            print(f"Pas de 'daily' dans {src}")
-            continue
-
-        df = pd.DataFrame(daily)
-        df["ville"] = i.name.split("=",1)[1]
-        df["longitude"] = obj.get("longitude")
-        df["latitude"] = obj.get("latitude")
-        df["altitude"] = obj.get("elevation")
-
-
-        df["date"] = df["time"]
-        df_f = df[["ville","latitude","longitude","date","temperature_2m_max","temperature_2m_min","precipitation_sum"]]
-        print(df_f)
-        break
-
-
+    #test _cleanup_partitions
+    _cleanup_partitions(pd.DataFrame({
+        "time": ["2024-06-01","2024-06-01","2024-06-02"],
+        "city": ["city1","city2","city1"]
+    }))
 
 
 if __name__ == "__main__":
     main()
-
