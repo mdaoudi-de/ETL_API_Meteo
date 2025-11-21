@@ -4,3 +4,5 @@ requests
 tqdm
 click
 sqlalchemy
+duckdb
+sqlite3
