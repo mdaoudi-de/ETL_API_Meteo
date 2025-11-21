@@ -207,26 +207,29 @@ weather(date, city, temperature_2m_max, temperature_2m_min, precipitation_sum)
 Exemples de requêtes exécutées automatiquement :
 
 ### 1) Top 5 des jours les plus chauds
-
+```text
 SELECT date, city, temperature_2m_max
 FROM weather
 ORDER BY temperature_2m_max DESC
 LIMIT 5;
+```
 
 ### 2) Moyenne pluie par ville
-
+```text
 SELECT city, AVG(precipitation_sum)
 FROM weather
 GROUP BY city
 ORDER BY AVG(precipitation_sum) DESC;
+```
+
 
 ### 3) Température max moyenne par ville
-
+```text
 SELECT city, AVG(temperature_2m_max)
 FROM weather
 GROUP BY city
 ORDER BY AVG(temperature_2m_max) DESC;
-
+```
 
 ---
 
