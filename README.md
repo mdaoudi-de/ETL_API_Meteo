@@ -76,8 +76,9 @@ ETL-API-Meteo/
 ├── Makefile                          # commandes make (pull / transform / load / all)
 ├── pyproject.toml                    # config projet / pytest
 ├── requirements.txt                  # dépendances Python
-└── README.md ```
+└── README.md  text```
 
+---
 
 ## 4. Données manipulées
 
