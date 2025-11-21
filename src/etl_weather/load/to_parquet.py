@@ -6,7 +6,7 @@ import pyarrow.parquet as pq
 import shutil
 
 STAGING = Path("data/staging")
-OUT = Path("data/parket")
+OUT = Path("data/parquet")
 
 OUT.mkdir(parents=True, exist_ok=True)
 
